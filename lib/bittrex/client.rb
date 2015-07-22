@@ -18,13 +18,15 @@ module Bittrex
         url = "#{HOST}/#{path}"
         req.params.merge!(params)
         req.url(url)
-
+        y key
         if key
           req.params[:apikey]   = key
           req.params[:nonce]    = nonce
           req.headers[:apisign] = signature(url, nonce)
         end
       end
+
+      y response.body
 
       JSON.parse(response.body)['result']
     end
