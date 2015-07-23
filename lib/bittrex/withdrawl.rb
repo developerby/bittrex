@@ -22,6 +22,12 @@ module Bittrex
       client.get('account/getwithdrawalhistory').map{|data| new(data) }
     end
 
+    def self.transaction(transaction_id)
+      all.detect do |transaction|
+        transaction.transaction_id == transaction_id
+      end
+    end
+
     private
 
     def self.client
