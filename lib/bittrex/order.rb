@@ -1,22 +1,22 @@
 module Bittrex
   class Order
     attr_reader :type, :id, :limit,
-                :exchange, :price, :quantity, :remaining,
-                :total, :fill, :executed_at, :raw
+                :exchange, :quantity, :remaining,
+                :total, :fill, :executed_at, :commission, :rate, :raw
 
     def initialize(attrs = {})
-      @id = attrs['Id'] || attrs['OrderUuid']
+      @id = attrs['Uuid'] || attrs['OrderUuid']
       @type = (attrs['Type'] || attrs['OrderType']).to_s.capitalize
       @exchange = attrs['Exchange']
       @quantity = attrs['Quantity']
       @remaining = attrs['QuantityRemaining']
-      @price = attrs['Rate'] || attrs['Price']
-      @total = attrs['Total']
+      @total = attrs['Price']
       @fill = attrs['FillType']
       @limit = attrs['Limit']
       @commission = attrs['Commission']
+      @rate = attrs['PricePerUnit']
       @raw = attrs
-      @executed_at = Time.parse(attrs['TimeStamp'])
+      # @executed_at = Time.parse(attrs['TimeStamp'])
     end
 
     def self.book(market, type, depth = 50)
@@ -41,8 +41,16 @@ module Bittrex
       client.get('market/getopenorders').map{|data| new(data) }
     end
 
+    def self.cancel_order(uuid)
+      client.get('market/cancel', uuid: uuid)
+    end
+
     def self.history
       client.get('account/getorderhistory').map{|data| new(data) }
+    end
+
+    def self.history_order_by_uuid(uuid)
+      history.detect { |e| e.id == uuid }
     end
 
     private

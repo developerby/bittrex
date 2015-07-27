@@ -28,6 +28,12 @@ module Bittrex
       end
     end
 
+    def self.by_uuid(uuid)
+      all.detect do |transaction|
+        transaction.id == uuid
+      end
+    end
+
     private
 
     def self.client

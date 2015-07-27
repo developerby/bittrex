@@ -20,6 +20,8 @@ module Bittrex
       uri = "#{HOST}/#{path}?#{encoded_params}"
       response = resource(uri).get({ 'apisign' => signature(uri) })
 
+      y JSON.parse(response.body)
+
       JSON.parse(response.body)['result']
     end
 
