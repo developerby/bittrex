@@ -1,12 +1,13 @@
 module Bittrex
-  class Quote
-    attr_reader :market, :bid, :ask, :last, :raw
+  class Quote < BaseBittrex
+    attr_reader :market, :bid, :ask, :last, :raw, :error
 
     def initialize(market, attrs = {})
       @market = market
       @bid = attrs['Bid']
       @ask = attrs['Ask']
       @last = attrs['Last']
+      @error = attrs['message']
       @raw = attrs
     end
 
@@ -14,13 +15,7 @@ module Bittrex
     # Bittrex::Quote.current('BTC-HPY')
     def self.current(market)
       response = client.get('public/getticker', market: market)
-      return new(market, response) if response.present?
-    end
-
-    private
-
-    def self.client
-      @client ||= Bittrex.client
+      return new(market, normalize_response(response)) if response.present?
     end
   end
 end

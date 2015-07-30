@@ -1,8 +1,8 @@
 module Bittrex
-  class Order
+  class Order < BaseBittrex
     attr_reader :type, :id, :limit,
                 :exchange, :quantity, :remaining,
-                :total, :fill, :executed_at, :commission, :rate, :raw
+                :total, :fill, :executed_at, :commission, :rate, :raw, :error
 
     def initialize(attrs = {})
       @id = attrs['Uuid'] || attrs['OrderUuid']
@@ -13,6 +13,7 @@ module Bittrex
       @total = attrs['Price']
       @fill = attrs['FillType']
       @limit = attrs['Limit']
+      @error = attrs['message']
       @commission = attrs['Commission']
       @rate = attrs['PricePerUnit']
       @raw = attrs
@@ -49,7 +50,7 @@ module Bittrex
       client.get('account/getorderhistory').map{|data| new(data) }
     end
 
-    def self.history_order_by_uuid(uuid)
+    def self.by_uuid(uuid)
       history.detect { |e| e.id == uuid }
     end
 
@@ -61,10 +62,6 @@ module Bittrex
         type: type,
         depth: depth
       })
-    end
-
-    def self.client
-      @client ||= Bittrex.client
     end
   end
 end

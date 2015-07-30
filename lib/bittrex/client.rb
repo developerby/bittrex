@@ -20,12 +20,14 @@ module Bittrex
       uri = "#{HOST}/#{path}?#{encoded_params}"
       response = resource(uri).get({ 'apisign' => signature(uri) })
 
-      y JSON.parse(response.body)
-
-      JSON.parse(response.body)['result']
+      prepare_response(JSON.parse(response.body))
     end
 
     private
+
+    def prepare_response(response)
+      response['success'] ? response['result'] : [response]
+    end
 
     def resource(uri)
       RestClient::Resource.new(uri)

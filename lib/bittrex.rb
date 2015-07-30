@@ -13,7 +13,8 @@ module Bittrex
   autoload :Withdrawl,     'bittrex/withdrawl'
   autoload :Withdraw,      'bittrex/withdraw'
   autoload :Trade,         'bittrex/trade'
-  autoload :MarketSummary,      'bittrex/market_summary'
+  autoload :BaseBittrex,   'bittrex/base_bittrex'
+  autoload :MarketSummary, 'bittrex/market_summary'
 
   def self.client
     @client ||= Client.new(configuration.auth)

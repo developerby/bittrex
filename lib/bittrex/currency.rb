@@ -1,6 +1,6 @@
 module Bittrex
-  class Currency
-    attr_reader :name, :abbreviation, :minimum_confirmation, :transaction_fee, :active, :raw
+  class Currency < BaseBittrex
+    attr_reader :name, :abbreviation, :minimum_confirmation, :transaction_fee, :active, :raw, :error
 
     alias_method :min_confirmation, :minimum_confirmation
     alias_method :fee, :transaction_fee
@@ -11,6 +11,7 @@ module Bittrex
       @transaction_fee = attrs['TxFee']
       @minimum_confirmation = attrs['MinConfirmation']
       @active = attrs['IsActive']
+      @error = attrs['message']
       @raw = attrs
     end
 
@@ -18,10 +19,8 @@ module Bittrex
       client.get('public/getcurrencies').map{|data| new(data) }
     end
 
-    private
-
-    def self.client
-      @client ||= Bittrex.client
+    def self.by_currency(abbreviation)
+      all.detect{ |e| e.abbreviation == abbreviation }
     end
   end
 end

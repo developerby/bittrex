@@ -1,22 +1,16 @@
 module Bittrex
-  class Withdraw
-    attr_reader :id, :raw
+  class Withdraw < BaseBittrex
+    attr_reader :id, :raw, :error
 
     def initialize(attrs = {})
       @id = attrs['uuid']
+      @error = attrs['message']
       @raw = attrs
     end
 
     def self.send(currency, quantity, address)
       response = client.get('account/withdraw', currency: currency, quantity: quantity, address: address)
-      return new(response) if response.present?
+      return new(normalize_response(response)) if response.present?
     end
-
-    private
-
-    def self.client
-      @client ||= Bittrex.client
-    end
-
   end
 end

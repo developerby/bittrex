@@ -1,6 +1,6 @@
 module Bittrex
-  class Wallet
-    attr_reader :id, :currency, :balance, :available, :pending, :address, :requested, :raw
+  class Wallet < BaseBittrex
+    attr_reader :id, :currency, :balance, :available, :pending, :address, :requested, :raw, :error
 
     def initialize(attrs = {})
       @id = attrs['Uuid'].to_s
@@ -9,6 +9,7 @@ module Bittrex
       @balance = attrs['Balance']
       @available = attrs['Available']
       @pending = attrs['Pending']
+      @error = attrs['message']
       @raw = attrs
       @requested = attrs['Requested']
     end
@@ -17,10 +18,8 @@ module Bittrex
       client.get('account/getbalances').map{|data| new(data) }
     end
 
-    private
-
-    def self.client
-      @client ||= Bittrex.client
+    def self.by_currency(currency)
+      all.detect { |e| e.currency == currency }
     end
   end
 end

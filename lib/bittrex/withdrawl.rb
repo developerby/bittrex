@@ -1,8 +1,8 @@
 module Bittrex
-  class Withdrawl
+  class Withdrawl < BaseBittrex
     attr_reader :id, :currency, :quantity, :address, :authorized,
                 :pending, :canceled, :invalid_address,
-                :transaction_cost, :transaction_id, :executed_at
+                :transaction_cost, :transaction_id, :executed_at, :error
 
     def initialize(attrs = {})
       @id = attrs['PaymentUuid']
@@ -15,6 +15,7 @@ module Bittrex
       @invalid_address = attrs['Canceled']
       @transaction_cost = attrs['TxCost']
       @transaction_id = attrs['TxId']
+      @error = attrs['message']
       @executed_at = Time.parse(attrs['Opened'])
     end
 
@@ -32,12 +33,6 @@ module Bittrex
       all.detect do |transaction|
         transaction.id == uuid
       end
-    end
-
-    private
-
-    def self.client
-      @client ||= Bittrex.client
     end
   end
 end

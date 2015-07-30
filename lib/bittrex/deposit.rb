@@ -1,6 +1,6 @@
 module Bittrex
-  class Deposit
-    attr_reader :id, :transaction_id, :address, :quantity, :currency, :confirmations, :executed_at
+  class Deposit < BaseBittrex
+    attr_reader :id, :transaction_id, :address, :quantity, :currency, :confirmations, :executed_at, :error
 
     def initialize(attrs = {})
       @id = attrs['Id']
@@ -9,7 +9,8 @@ module Bittrex
       @quantity = attrs['Amount']
       @currency = attrs['Currency']
       @confirmations = attrs['Confirmations']
-      @executed_at = Time.parse(attrs['LastUpdated'])
+      @error = attrs['message']
+      @executed_at = Time.parse(attrs['LastUpdated']) if attrs['LastUpdated'].present?
     end
 
     def self.all
@@ -20,12 +21,6 @@ module Bittrex
       all.detect do |transaction|
         transaction.transaction_id == transaction_id
       end
-    end
-
-    private
-
-    def self.client
-      @client ||= Bittrex.client
     end
   end
 end
