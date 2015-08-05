@@ -1,10 +1,11 @@
 module Bittrex
   class Withdraw < BaseBittrex
-    attr_reader :id, :raw, :error
+    attr_reader :id, :raw, :error, :success
 
     def initialize(attrs = {})
       @id = attrs['uuid']
       @error = attrs['message']
+      @success = @error.nil?
       @raw = attrs
     end
 
