@@ -17,6 +17,9 @@ module Bittrex
       @commission = attrs['Commission']
       @rate = attrs['PricePerUnit']
       @raw = attrs
+      fix_total if @total && @commission
+      fix_commission if @commission && @rate
+      exchange_total_and_quantity
       # @executed_at = Time.parse(attrs['TimeStamp'])
     end
 
@@ -55,6 +58,26 @@ module Bittrex
     end
 
     private
+
+    def sell_order?
+      @type == 'Limit_sell'
+    end
+
+    def fix_total
+      @total = if sell_order?
+        (@total.to_d - @commission.to_d).to_f
+      else
+        (@total.to_d + @commission.to_d).to_f
+      end
+    end
+
+    def exchange_total_and_quantity
+      @total, @quantity = @quantity, @total unless sell_order?
+    end
+
+    def fix_commission
+      @commission = sell_order? ? @commission : (@commission.to_d / @rate.to_d).to_f
+    end
 
     def self.orderbook(market, type, depth)
       client.get('public/getorderbook', {
