@@ -15,11 +15,11 @@ module Bittrex
       @limit = attrs['Limit']
       @error = attrs['message']
       @commission = attrs['Commission']
-      @rate = attrs['PricePerUnit']
+      @rate = attrs['PricePerUnit'] || attrs['Rate']
       @raw = attrs
       fix_total if @total && @commission
       fix_commission if @commission && @rate
-      exchange_total_and_quantity
+      exchange_total_and_quantity if @total.present? && @quantity.present?
       # @executed_at = Time.parse(attrs['TimeStamp'])
     end
 
